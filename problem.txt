@@ -1,0 +1,126 @@
+A one-dimensional hydraulic model to solve the **Saint-Venant equations** for the drainage network. The system consists of:
+- **Nodes**: Representing manholes and inlets.
+- **Conduits**: Representing pipes.
+- **Subcatchments**: Representing areas that collect runoff.
+
+The Saint-Venant equations are solved iteratively, ensuring high precision and stability, without being restricted by the Courant condition.
+
+### 2. **Core Equations: Saint-Venant for Free-Surface Flow**
+
+The hydraulic system in InfoWorks ICM uses the **Saint-Venant equations** (Yen, 1973), which consist of:
+
+#### A. **Continuity Equation** (Conservation of Mass)
+\[
+\frac{\partial A}{\partial t} + \frac{\partial Q}{\partial x} = 0
+\]
+Where:
+- \( A \): Cross-sectional area (m²)
+- \( Q \): Flow rate (m³/s)
+- \( x \): Spatial coordinate (m)
+- \( t \): Time (s)
+
+This equation ensures that the mass of the fluid is conserved as it moves through the system.
+
+#### B. **Momentum Equation** (Conservation of Momentum)
+\[
+\frac{\partial Q}{\partial t} + \frac{\partial}{\partial x} \left( \frac{Q^2}{A} \right) + gA \left( \cos\theta \frac{\partial h}{\partial x} - S_0 \right) + \frac{Q |Q|}{K^2} = 0
+\]
+Where:
+- \( g \): Gravitational acceleration (9.81 m/s²)
+- \( h \): Water depth (m)
+- \( \theta \): Bed slope angle
+- \( S_0 \): Bed slope
+- \( K \): Conveyance parameter for frictional losses
+
+This equation accounts for the dynamics of the flow under the influence of pressure forces, gravitational forces, and frictional losses.
+
+### 3. **Transition Between Free-Surface Flow and Pressurized Flow**
+
+The transition from free-surface flow to pressurized flow is handled using the **Preissmann slot method**. This method introduces a narrow vertical slot at the top of the pipe, allowing for smooth transitions when the water level exceeds the height of the pipe.
+
+#### A. **Free Surface Width in Pressurized Flow**
+\[
+B = \frac{g A_f}{C_p^2}
+\]
+Where:
+- \( B \): Width of the free surface (m)
+- \( A_f \): Full cross-sectional area of the pipe (m²)
+- \( C_p \): Speed of the pressure wave (m/s)
+
+This equation governs the pressurized flow, where the width of the free surface is conceptually replaced by a small value when the flow becomes pressurized.
+
+### 4. **Numerical Approximation: Preissmann Scheme**
+
+The **Preissmann scheme** is used to approximate the Saint-Venant equations, providing stability and flexibility for solving unsteady flow problems.
+
+#### A. **Function Approximation**
+\[
+f = \frac{\theta}{2} \left( f^{n+1}_{i+1} + f^{n+1}_i \right) + \frac{1 - \theta}{2} \left( f^n_{i+1} + f^n_i \right)
+\]
+Where:
+- \( \theta \): Weighting factor
+- \( f \): Function (e.g., flow rate or cross-sectional area)
+- \( n \): Time index
+- \( i \): Spatial index
+
+#### B. **Spatial Derivative Approximation**
+\[
+\frac{\partial f}{\partial x} = \frac{\theta}{\Delta x} \left( f^{n+1}_{i+1} - f^{n+1}_i \right) + \frac{1 - \theta}{\Delta x} \left( f^n_{i+1} - f^n_i \right)
+\]
+
+#### C. **Temporal Derivative Approximation**
+\[
+\frac{\partial f}{\partial t} = \frac{1}{2 \Delta t} \left( f^{n+1}_i + f^{n+1}_{i+1} - f^n_i - f^n_{i+1} \right)
+\]
+
+This method is used to approximate both spatial and temporal derivatives, ensuring the equations remain solvable across time steps.
+
+### 5. **Pressurized Pipe Flow**
+
+For pipes always under pressure, InfoWorks ICM uses a different set of equations that do not involve the Preissmann slot method.
+
+#### A. **Continuity in Pressurized Pipes**
+\[
+\frac{\partial Q}{\partial x} = 0
+\]
+
+This equation reflects the fact that the flow rate remains constant in pressurized pipes.
+
+#### B. **Momentum in Pressurized Pipes**
+\[
+\frac{\partial Q}{\partial t} + gA \left( \frac{\partial h}{\partial x} - S_0 + \frac{Q |Q|}{K^2} \right) = 0
+\]
+
+This equation accounts for the balance of forces in a fully pressurized pipe, without the need for adjusting free-surface conditions.
+
+### 6. **Boundary Conditions and Continuity Equation**
+
+Boundary conditions ensure that the system's solutions remain consistent at the ends of the conduits:
+
+\[
+f(Q_i, Y_i, Y_j) = 0
+\]
+
+#### A. **Continuity at Nodes**
+\[
+Q_i + \sum \beta_j Q_j = A_t \frac{dY_i}{dt}
+\]
+Where:
+- \( Q_i \): Flow rate at node \( i \)
+- \( Y_i \): Hydraulic head at node \( i \)
+- \( \beta_j \): Weighting coefficient for flow contributions
+- \( A_t \): Cross-sectional area at node \( i \)
+
+This equation ensures that mass conservation is maintained at each node in the system.
+
+### 7. **Model Precision and Stability**
+
+The system in InfoWorks ICM is highly precise, solving the full Saint-Venant equations iteratively. Unlike other models, it is not restricted by the **Courant-Friedrichs-Lewy (CFL) condition**, which ensures stability regardless of the time step or spatial discretization.
+
+### 8. **Solution Flow**
+
+- **Initialization**: Input the physical parameters (bed slope, cross-sectional area, flow rate) and initial conditions.
+- **Discretization**: The domain is divided into spatial and temporal grids.
+- **Time Stepping**: For each time step, solve the continuity and momentum equations iteratively using the Preissmann scheme.
+- **Update**: Calculate the new values for flow rate and water depth at each spatial point for each time step.
+- **Final Output**: Output the flow rate, water depth, and cross-sectional area for all time steps and spatial locations.

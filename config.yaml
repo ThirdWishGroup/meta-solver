@@ -1,0 +1,14 @@
+steps_directory: "steps"
+solution_directory: "solution"
+max_retries: 5
+openai_model: "gpt-4"
+log_file: "pipeline.log"
+log_level: "INFO"
+remote_servers:
+  - hostname: "remote.server.com"
+    port: 22
+    username: "user"
+    password: null
+    ssh_key_path: "/app/.ssh/id_rsa"
+    execute_remotely: false
+    steps_to_execute: []

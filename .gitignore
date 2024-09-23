@@ -1,0 +1,6 @@
+venv 
+allcode.txt
+concatenate.sh
+pipeline.log
+__pycache__/
+.env
