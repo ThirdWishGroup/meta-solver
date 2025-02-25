@@ -43,31 +43,6 @@ The pipeline is designed to:
 - **Docker Integration:** Containerized execution to ensure consistency across different environments.
 - **Retry Mechanism:** Supports configurable maximum retries for executing steps and the assembled solution.
 
----
-
-## Installation
-
-1. **Clone the Repository**
-   ```bash
-   git clone https://your-repository-url.git
-   cd your-repository-directory
-   ```
-
-2. **Create a Virtual Environment**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. **Install Dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-   > Ensure you have Docker installed and running if you plan to use Docker-based execution.
-
----
-
 ## Usage
 
 1. **Prepare Input Files**
